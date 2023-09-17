@@ -4,7 +4,7 @@ import DB_Info
 class DB_Insert:
 
     def __init__(self):
-        db_info = DB_Info.Connect
+        db_info = DB_Info.Connect()
         self.host = db_info.host
         self.user = db_info.username
         self.passwd = db_info.password
