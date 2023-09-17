@@ -14,7 +14,7 @@ class DB_Insert:
         self.conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port, use_unicode=True, charset='utf8')
         self.cursor = self.conn.cursor()  
 
-    def item_location(self):
+    def insert_location(self):
         query = "SELECT info FROM welcome"
         self.cursor.execute(query)
         self.conn.commit()
