@@ -1,4 +1,3 @@
-from openpyxl import *
 import os
 import sys
 from PyQt5.QtWidgets import *
@@ -15,7 +14,6 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 #UI파일 연결
-#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
 main_window= uic.loadUiType(resource_path("C:\Python Workplace\Make_ERP\windows\main_window.ui"))[0] # Window 사용시 ui 주소
 
