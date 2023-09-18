@@ -17,7 +17,7 @@ def resource_path(relative_path):
 #UI파일 연결
 #단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-main_window= uic.loadUiType(resource_path("C:\Python Workplace\Make_ERP\main_window.ui"))[0] # Window 사용시 ui 주소
+main_window= uic.loadUiType(resource_path("C:\Python Workplace\Make_ERP\windows\main_window.ui"))[0] # Window 사용시 ui 주소
 
 #화면을 띄우는데 사용되는 Class 선언
 class WindowClass(QMainWindow, main_window) :
@@ -51,7 +51,7 @@ class WindowClass(QMainWindow, main_window) :
 
     def inventory_location(self):        
         import inventory_location as inv_loc
-        
+
         self.location = inv_loc.WindowClass()
         self.location.show()
 
