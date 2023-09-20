@@ -56,11 +56,14 @@ class WindowClass(QMainWindow, main_window) :
     def upload_location(self):        
         import upload_location as inv_loc
 
-        self.location = inv_loc.WindowClass()
-        self.location.show()
+        self.location = inv_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+        self.location.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
     def upload_barcode(self):
-        pass
+        import upload_barcode as bar_loc
+
+        self.barcode = bar_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+        self.barcode.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)
