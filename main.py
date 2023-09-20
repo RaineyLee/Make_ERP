@@ -25,21 +25,27 @@ class WindowClass(QMainWindow, main_window) :
         self.setWindowTitle("구창_용인창고")
         # self.slots()
 
-        outgoing = QAction('제품출고', self)
-        outgoing.setStatusTip("제품출고")
-        outgoing.triggered.connect(self.outgoing)
-
-        inventory_location = QAction('제품위치 업로드', self)
-        inventory_location.setStatusTip("제품위치 업로드")
-        inventory_location.triggered.connect(self.inventory_location)
-
         menu_bar = self.menuBar()
         outgoing_menu = menu_bar.addMenu("출고")
         incommig_menu = menu_bar.addMenu("입고")
         inventory_menu = menu_bar.addMenu("재고")
+        upload_menu = menu_bar.addMenu("업로드")
+        
+        outgoing = QAction('제품출고', self)
+        outgoing.setStatusTip("제품출고")
+        outgoing.triggered.connect(self.outgoing)
+
+        upload_location = QAction('제품위치 업로드', self)
+        upload_location.setStatusTip("제품위치 업로드")
+        upload_location.triggered.connect(self.upload_location)
+
+        upload_barcode = QAction('바코드 업로드', self)
+        upload_barcode.setStatusTip("바코드 업로드")
+        upload_barcode.triggered.connect(self.upload_barcode)
 
         outgoing_menu.addAction(outgoing)
-        inventory_menu.addAction(inventory_location)
+        upload_menu.addAction(upload_location)
+        upload_menu.addAction(upload_barcode)
 
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
@@ -47,11 +53,14 @@ class WindowClass(QMainWindow, main_window) :
     def outgoing(self):
         print("new menu call")
 
-    def inventory_location(self):        
-        import inventory_location as inv_loc
+    def upload_location(self):        
+        import upload_location as inv_loc
 
         self.location = inv_loc.WindowClass()
         self.location.show()
+
+    def upload_barcode(self):
+        pass
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

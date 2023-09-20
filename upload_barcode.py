@@ -18,14 +18,14 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-main_window= uic.loadUiType(resource_path("C:\Python Workplace\Make_ERP\windows\inventory_location.ui"))[0] # Window 사용시 ui 주소
+main_window= uic.loadUiType(resource_path("C:\\Python Workplace\\Make_ERP\\windows\\upload_barcode.ui"))[0] # Window 사용시 ui 주소
 
 #화면을 띄우는데 사용되는 Class 선언
 class WindowClass(QWidget, main_window) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("제품위치")
+        self.setWindowTitle("바코드 정보")
         self.slots()
 
         self.date_edit.setDate(QDate.currentDate())
@@ -53,10 +53,11 @@ class WindowClass(QWidget, main_window) :
             QMessageBox.about(self, 'Warning', '파일을 선택하지 않았습니다.')
 
     def make_data(self):
+        self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
         file_name = self.text_select_file.toPlainText()
 
-        from utils.make_data import Location
-        make_data = Location(file_name)
+        from utils.make_data import Barcode
+        make_data = Barcode(file_name)
 
         self._list = make_data.excel_data()
                 
@@ -104,7 +105,7 @@ class WindowClass(QWidget, main_window) :
     def upload(self):
         from db.DB_Insert import DB_Insert
         data_insert = DB_Insert()
-        result = data_insert.insert_location(self._list)
+        result = data_insert.insert_barcode(self._list)
 
         self.msg_box(result[0], result[1])
 

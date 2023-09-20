@@ -1,7 +1,8 @@
 import sys
-sys.path.append("C:\\Python Workplace\\Make_ERP\\db") #모듈 import가 안 될때 경로를 지정해 주기
 import DB_Info
 import pymysql
+
+sys.path.append("C:\\Python Workplace\\Make_ERP\\db") #모듈 import가 안 될때 경로를 지정해 주기
 
 class DB_Insert:
 
@@ -27,12 +28,32 @@ class DB_Insert:
             cursor.execute(query)
             self.conn.commit()
 
-            query = """INSERT INTO item_location (id, name, location, brand, package) VALUES (%s, %s, %s, %s, %s );"""
+            query = """INSERT INTO item_location (id, name, location, brand, package, c_date) VALUES (%s, %s, %s, %s, %s, now());"""
             cursor.executemany(query, arr_1)
             self.conn.commit()
-            self.conn.close()            
+            self.conn.close()
+
         except Exception as e:
             error = ("Error", str(e))
             return error
 
         return ("완료", "제품위치 정보가 정상적으로 업로드 되었습니다.")
+
+    def insert_barcode(self, arr_1):
+        cursor = self.conn.cursor()
+
+        try:
+            query = "TRUNCATE TABLE item_barcode;"
+            cursor.execute(query)
+            self.conn.commit()
+
+            query = """INSERT INTO item_barcode (id, alias, name, barcode, sc_code, c_date) VALUES (%s, %s, %s, %s, %s, now());"""
+            cursor.executemany(query, arr_1)
+            self.conn.commit()
+            self.conn.close()
+                        
+        except Exception as e:
+            error = ("Error", str(e))
+            return error
+
+        return ("완료", "바코드 정보가 정상적으로 업로드 되었습니다.")
