@@ -1,5 +1,5 @@
-import DB_Info as DB
+# import DB_Info as DB
 
-connect = DB.DB_Guchang()
+# connect = DB.DB_Guchang()
 
-connect.db_connection()
+# connect.db_connection()

@@ -29,13 +29,15 @@ class WindowClass(QWidget, main_window) :
         self.slots()
 
         self.date_edit.setDate(QDate.currentDate())
-        self.date = self.date_edit.date().toString("yyyyMMdd")   
+        self.date = self.date_edit.date().toString("yyyyMMdd")
+
+        self._list = []   
 
     def slots(self):
         self.date_edit.dateChanged.connect(self.set_date)
         self.btn_open.clicked.connect(self.file_open)
         self.btn_select.clicked.connect(self.make_data)
-
+        self.btn_upload.clicked.connect(self.upload)
         self.btn_close.clicked.connect(self.window_close)
 
     def set_date(self):
@@ -56,9 +58,9 @@ class WindowClass(QWidget, main_window) :
         from utils.make_data import Location
         make_data = Location(file_name)
 
-        _list = make_data.excel_data()
+        self._list = make_data.excel_data()
                 
-        self.make_table(len(_list)-1, _list)
+        self.make_table(len(self._list)-1, self._list)
 
     def make_table(self, num, arr_1):
         self.tbl_info.setRowCount(num)
@@ -99,6 +101,24 @@ class WindowClass(QWidget, main_window) :
         for rowid in rows:
             self.tbl_info.removeRow(rowid)
 
+    def upload(self):
+        from db.DB_Insert import DB_Insert
+        data_insert = DB_Insert()
+        result = data_insert.insert_location(self._list)
+
+        self.msg_box(result[0], result[1])
+
+    # def progress_loading(self):
+    #     for i in range(101):                        # 1~100 까지
+    #         self.progress.setValue(i)               # i 증가
+    #         sleep(0.1)                              # 0.1초마다 수행
+    #     self.msg_box()
+
+    def msg_box(self, arg_1, arg_2):
+        msg = QMessageBox()
+        msg.setWindowTitle(arg_1)               # 제목설정
+        msg.setText(arg_2)                          # 내용설정
+        msg.exec_()                                 # 메세지박스 실행
 
     def window_close(self):
         self.close()

@@ -29,8 +29,8 @@ class WindowClass(QMainWindow, main_window) :
         outgoing.setStatusTip("제품출고")
         outgoing.triggered.connect(self.outgoing)
 
-        inventory_location = QAction('제품위치', self)
-        inventory_location.setStatusTip("제품위치")
+        inventory_location = QAction('제품위치 업로드', self)
+        inventory_location.setStatusTip("제품위치 업로드")
         inventory_location.triggered.connect(self.inventory_location)
 
         menu_bar = self.menuBar()
