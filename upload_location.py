@@ -103,17 +103,11 @@ class WindowClass(QWidget, main_window) :
             self.tbl_info.removeRow(rowid)
 
     def upload(self):
-        from db.DB_Insert import DB_Insert
-        data_insert = DB_Insert()
+        from db.db_insert import Insert
+        data_insert = Insert()
         result = data_insert.insert_location(self._list)
 
         self.msg_box(result[0], result[1])
-
-    # def progress_loading(self):
-    #     for i in range(101):                        # 1~100 까지
-    #         self.progress.setValue(i)               # i 증가
-    #         sleep(0.1)                              # 0.1초마다 수행
-    #     self.msg_box()
 
     def msg_box(self, arg_1, arg_2):
         msg = QMessageBox()

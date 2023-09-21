@@ -1,13 +1,13 @@
 import sys
-import DB_Info
-import pymysql
-
 sys.path.append("C:\\Python Workplace\\Make_ERP\\db") #모듈 import가 안 될때 경로를 지정해 주기
+import db_info as conn_info
+import pymysql
+from progressbar import  Bar, ETA, Percentage, ProgressBar, RotatingMarker
 
-class DB_Insert:
+class Insert:
 
     def __init__(self):
-        db_info = DB_Info.Connect()
+        db_info = conn_info.Connect()
 
         self.host = db_info.host
         self.user = db_info.username
@@ -51,9 +51,24 @@ class DB_Insert:
             cursor.executemany(query, arr_1)
             self.conn.commit()
             self.conn.close()
+
+            count = 0
+            for index, row in enumertae(arr_1):
+                query = """INSERT INTO item_barcode (id, alias, name, barcode, sc_code, c_date) VALUES (%s, %s, %s, %s, %s, now());"""
+                cursor.execute(query, row)
+                count += 1
+                return count
+            self.conn.commit()
+            self.conn.close()
                         
         except Exception as e:
             error = ("Error", str(e))
             return error
 
         return ("완료", "바코드 정보가 정상적으로 업로드 되었습니다.")
+
+    # def progress_loading(self):
+    #     for i in range(101):                        # 1~100 까지
+    #         self.progress.setValue(i)               # i 증가
+    #         sleep(0.1)                              # 0.1초마다 수행
+    #     self.msg_box()

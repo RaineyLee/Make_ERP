@@ -43,9 +43,14 @@ class WindowClass(QMainWindow, main_window) :
         upload_barcode.setStatusTip("바코드 업로드")
         upload_barcode.triggered.connect(self.upload_barcode)
 
+        item_location = QAction('제품 위치', self)
+        item_location.setStatusTip("제품 위치")
+        item_location.triggered.connect(self.item_location)
+
         outgoing_menu.addAction(outgoing)
         upload_menu.addAction(upload_location)
         upload_menu.addAction(upload_barcode)
+        inventory_menu.addAction(item_location)
 
         status_bar = self.statusBar()
         self.setStatusBar(status_bar)
@@ -64,6 +69,9 @@ class WindowClass(QMainWindow, main_window) :
 
         self.barcode = bar_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
         self.barcode.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+
+    def item_location(self):
+        pass
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)
