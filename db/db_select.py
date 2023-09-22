@@ -25,13 +25,14 @@ class Select:
             cursor.execute(query)
             result = cursor.fetchall()
 
-            if result:                
+            if result:
                 self.conn.close()
                 self.msg_box("조회완료", "정상적으로 조회 되었습니다.")
                 return result
             else:
                 self.conn.close()
-                self.msg_box("조회결과", "조회결과가 없습니다.")            
+                self.msg_box("조회결과", "조회결과가 없습니다.")
+                return            
 
         except Exception as e:
             self.msg_box("Error", str(e))

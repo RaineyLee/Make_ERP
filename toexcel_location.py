@@ -190,43 +190,43 @@ class WindowClass(QWidget, main_window) :
             self.tbl_list.removeRow(rowid)
 
     
-    # # 테이블에 남겨진 정보를 엑셀로 변환
-    # def final_data(self):
-    #     rows = self.tbl_list.rowCount()
-    #     cols = self.tbl_list.columnCount()
+    # 테이블에 남겨진 정보를 엑셀로 변환
+    def final_data(self):
+        rows = self.tbl_list.rowCount()
+        cols = self.tbl_list.columnCount()
 
-    #     list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
+        list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
 
-    #     for i in range(rows):
-    #         list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
-    #         for j in range(cols):
-    #             data = self.tbl_list.item(i,j)
-    #             list_1.append(data.text())
-    #         list_2.append(list_1)
+        for i in range(rows):
+            list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
+            for j in range(cols):
+                data = self.tbl_list.item(i,j)
+                list_1.append(data.text())
+            list_2.append(list_1)
 
-    #     num = len(list_2)
-    #     self.make_excel(list_2, num)
+        num = len(list_2)
+        self.make_excel(list_2, num)
         
 
-    # # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
-    # def make_excel(self, arr, num):
-    #     wb = openpyxl.Workbook()
-    #     wb.create_sheet(index=0, title='CJ택배')
+    # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
+    def make_excel(self, arr, num):
+        wb = openpyxl.Workbook()
+        wb.create_sheet(index=0, title='위치정보')
 
-    #     sheet = wb.active
-    #     list_line = ['번호', '날짜', '품목', '수량', '받는사람', '전화번호1', '전화번호2', '우편번호', '주소', '비고']
-    #     sheet.append(list_line)
+        sheet = wb.active
+        list_line = ['번호', '날짜', '품목', '수량', '받는사람', '전화번호1', '전화번호2', '우편번호', '주소', '비고']
+        sheet.append(list_line)
 
-    #     for i in range(num):
-    #         for j in range(len(list_line)):
-    #             sheet.cell(row=i+2, column=j+1, value=arr[i][j])
+        for i in range(num):
+            for j in range(len(list_line)):
+                sheet.cell(row=i+2, column=j+1, value=arr[i][j])
 
-    #     fname = self.file_save()
+        fname = self.file_save()
 
-    #     if fname:
-    #         self.save_excel(wb, fname)
-    #     else:
-    #         return
+        if fname:
+            self.save_excel(wb, fname)
+        else:
+            return
 
 
     # def save_excel(self, workbook, file_name):
