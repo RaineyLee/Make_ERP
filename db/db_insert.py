@@ -2,6 +2,7 @@ import sys
 sys.path.append("C:\\Python Workplace\\Make_ERP\\db") #모듈 import가 안 될때 경로를 지정해 주기
 import db_info as conn_info
 import pymysql
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 
 class Insert:
 
@@ -14,10 +15,7 @@ class Insert:
         self.db = db_info.database
         self.port = db_info.port
 
-        # self.arr_1 = arr_1
-
-        self.conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port, use_unicode=True, charset='utf8')
-        
+        self.conn = pymysql.connect(host=self.host, user=self.user, passwd=self.passwd, db=self.db, port=self.port, use_unicode=True, charset='utf8')        
 
     def insert_location(self, arr_1):
         cursor = self.conn.cursor()
@@ -49,7 +47,7 @@ class Insert:
             query = """INSERT INTO item_barcode (id, alias, name, barcode, sc_code, c_date) VALUES (%s, %s, %s, %s, %s, now());"""
             cursor.executemany(query, arr_1)
             self.conn.commit()
-            self.conn.close()
+            self.conn.close()            
                         
         except Exception as e:
             error = ("Error", str(e))
