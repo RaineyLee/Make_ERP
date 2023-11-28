@@ -43,13 +43,18 @@ class WindowClass(QMainWindow, main_window) :
         upload_barcode.setStatusTip("바코드 업로드")
         upload_barcode.triggered.connect(self.upload_barcode)
 
-        item_location = QAction('제품 위치', self)
-        item_location.setStatusTip("제품 위치")
+        upload_saleslist = QAction('출고리스트 업로드', self)
+        upload_saleslist.setStatusTip("출고리스트 업로드")
+        upload_saleslist.triggered.connect(self.upload_saleslist)
+
+        item_location = QAction('제품위치 입력', self)
+        item_location.setStatusTip("제품위치 입력")
         item_location.triggered.connect(self.item_location)
 
         outgoing_menu.addAction(outgoing)
         upload_menu.addAction(upload_location)
         upload_menu.addAction(upload_barcode)
+        upload_menu.addAction(upload_saleslist)
         inventory_menu.addAction(item_location)
 
         status_bar = self.statusBar()
@@ -70,8 +75,17 @@ class WindowClass(QMainWindow, main_window) :
         self.barcode = bar_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
         self.barcode.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
+    def upload_saleslist(self):
+        import upload_saleslist as saleslist
+
+        self.saleslist = saleslist.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+        self.saleslist.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+
     def item_location(self):
-        pass
+        import toexcel_location as item_loc
+
+        self.item_loc = item_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+        self.item_loc.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

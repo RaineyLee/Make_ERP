@@ -38,7 +38,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 windows_ui_loc = "C:\\Python Workplace\\Make_ERP\\windows\\toexcel_location.ui"
-# windows_excel_loc = "C:바탕화면\출고정보.xlsx"
+windows_excel_loc = "C:\\구창물류\\기타\\제품위치.xlsx"
 
 main_window = uic.loadUiType(resource_path(windows_ui_loc))[0]
 
@@ -55,31 +55,144 @@ class WindowClass(QWidget, main_window) :
 
     def slot(self):
         self.btn_select.clicked.connect(self.db_select)
-        # self.btn_delete.clicked.connect(self.deleteRows)
-        # self.btn_excel.clicked.connect(self.to_excel)
+        self.btn_delete.clicked.connect(self.deleteRows)
+        self.btn_excel.clicked.connect(self.make_file)
+        self.btn_close.clicked.connect(self.close)
 
     def db_select(self):
         from_date = self.date_edit_from.date().toString('yyyy-MM-dd')
         to_date = self.date_edit_to.date().addDays(1).toString('yyyy-MM-dd')
-        date = [from_date, to_date]
+        date = (from_date, to_date)
 
         from db.db_select import Select
         cl_select = Select()
         result = cl_select.select_location(date)
 
-        self.make_table(result)        
-
-    # # 파일 저장 대화상자
-    # def file_save(self):
-    #     dialog = QFileDialog(self)
-    #     qurl  = dialog.getSaveFileName(parent=self, caption='Open file', directory=windows_excel_loc)
+        if result == None:
+            return
+        else:
+            self.make_table(result)
         
-    #     url = qurl[0]
+    # 테이블 생성 및 자료 표시
+    def make_table(self, arr_1):        
+        num = len(arr_1)
+        self.tbl_list.setRowCount(num)
+        col = self.tbl_list.columnCount()
 
-    #     try:
-    #         return url
-    #     except Exception as e:
-    #         QMessageBox.about(self, 'Warning', e)        
+        for i in range(num):
+            for j in range(self.tbl_list.columnCount()): # 아니면 10개
+                self.tbl_list.setItem(i, j, QTableWidgetItem(arr_1[i][j]))
+
+        # 컨텐츠의 길이에 맞추어 컬럼의 길이를 자동으로 조절
+        # ################################################################
+        # table = self.tbl_list
+        # header = self_tbl_list.horizontalHeader()
+
+        # for i in range(col):
+        #     header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
+
+        self.tbl_list.setColumnWidth(0, int(self.tbl_list.width() * 0.1))
+        self.tbl_list.setColumnWidth(1, int(self.tbl_list.width() * 0.3))
+        self.tbl_list.setColumnWidth(2, int(self.tbl_list.width() * 0.3)) 
+        self.tbl_list.setColumnWidth(3, int(self.tbl_list.width() * 0.05)) 
+        self.tbl_list.setColumnWidth(4, int(self.tbl_list.width() * 0.05)) 
+        self.tbl_list.setColumnWidth(5, int(self.tbl_list.width() * 0.1)) 
+        self.tbl_list.setColumnWidth(6, int(self.tbl_list.width() * 0.1)) 
+        ################################################################
+    
+    # 테이블 선택범위 삭제
+    def deleteRows(self):
+        indexes = []
+        rows = []
+
+        for idx in self.tbl_list.selectedItems():
+            indexes.append(idx.row())
+
+        for value in indexes:
+            if value not in rows:
+                rows.append(value)
+
+        # 삭제시 오류 방지를 위해 아래서 부터 삭제(리버스 소팅)
+        rows = sorted(rows, reverse=True)
+
+        # 선택행 삭제
+        for rowid in rows:
+            self.tbl_list.removeRow(rowid)
+
+    
+    # 테이블에 남겨진 정보를 엑셀로 변환
+    def make_file(self):
+        rows = self.tbl_list.rowCount()
+        cols = self.tbl_list.columnCount()
+
+        list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
+
+        for i in range(rows):
+            list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
+            for j in range(3): #앞쪽의 3개 컬럼 정보만 사용(id, name, location)
+                data = self.tbl_list.item(i,j)
+                list_1.append(data.text())
+            list_2.append(list_1)
+
+        num = len(list_2)
+        self.make_excel(list_2, num)
+        
+
+    # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
+    def make_excel(self, arr, num):
+        wb = openpyxl.Workbook()
+        wb.create_sheet(index=0, title='위치정보')
+
+        sheet = wb.active
+        list_line = ['품목코드', '품목명', '랙위치']
+        sheet.append(list_line)
+
+        print(arr)
+
+        for i in range(num):
+            for j in range(len(list_line)):
+                sheet.cell(row=i+2, column=j+1, value=arr[i][j])
+
+        ## 각 칼럼에 대해서 모든 셀값의 문자열 개수에서 1.1만큼 곱한 것들 중 최대값을 계산한다.
+        for column_cells in sheet.columns:
+            length = max(len(str(cell.value))*1.1 for cell in column_cells)
+            sheet.column_dimensions[column_cells[0].column_letter].width = length
+        
+        fname = self.file_save()
+
+        try:
+            if fname:
+                self.save_excel(wb, fname)
+        except Exception as e:
+            self.msg_box("Error", str(e))
+
+
+    # 파일 저장 대화상자
+    def file_save(self):
+        dialog = QFileDialog(self)
+        qurl  = dialog.getSaveFileName(parent=self, caption='Save file', directory=windows_excel_loc)
+        
+        url = qurl[0]
+
+        try:
+            return url
+        except Exception as e:
+            QMessageBox.about(self, 'Warning', e)
+
+
+    def save_excel(self, workbook, file_name):
+        workbook.save(file_name)
+
+        self.close()
+
+    
+
+    def msg_box(self, msg_1, msg_2):
+        msg = QMessageBox()
+        msg.setWindowTitle(msg_1)               # 제목설정
+        msg.setText(msg_2)                          # 내용설정
+        msg.exec_()                                 # 메세지박스 실행
+           
 
     # # openpyxl을 이용한 엑셀 파일 오픈
     # # 셀값을 리스트로 만들어 한 라인만 만들기 위해 다른 함수로 보냄
@@ -142,100 +255,6 @@ class WindowClass(QWidget, main_window) :
 
     #     # 생성된 자료를 테이블로 만들어 눈으로 보고 확인 하게 함.
     #     self.make_table(row_count, fin_arr)
-        
-    # 테이블 생성 및 자료 표시
-    def make_table(self, arr_1):
-        num = len(arr_1)
-        self.tbl_list.setRowCount(num)
-        col = self.tbl_list.columnCount()
-
-        for i in range(2):
-            for j in range(self.tbl_list.columnCount()): # 아니면 10개
-                self.tbl_list.setItem(i, j, QTableWidgetItem(arr_1[i][j]))
-
-        # 컨텐츠의 길이에 맞추어 컬럼의 길이를 자동으로 조절
-        # ################################################################
-        # table = self.tbl_list
-        # header = self_tbl_list.horizontalHeader()
-
-        # for i in range(col):
-        #     header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
-
-        self.tbl_list.setColumnWidth(0, int(self.tbl_list.width() * 0.1))
-        self.tbl_list.setColumnWidth(1, int(self.tbl_list.width() * 0.3))
-        self.tbl_list.setColumnWidth(2, int(self.tbl_list.width() * 0.3)) 
-        self.tbl_list.setColumnWidth(3, int(self.tbl_list.width() * 0.05)) 
-        self.tbl_list.setColumnWidth(4, int(self.tbl_list.width() * 0.05)) 
-        self.tbl_list.setColumnWidth(5, int(self.tbl_list.width() * 0.1)) 
-        self.tbl_list.setColumnWidth(6, int(self.tbl_list.width() * 0.1)) 
-        ################################################################
-    
-    # 테이블 선택범위 삭제
-    def deleteRows(self):
-        indexes = []
-        rows = []
-
-        for idx in self.tbl_list.selectedItems():
-            indexes.append(idx.row())
-
-        for value in indexes:
-            if value not in rows:
-                rows.append(value)
-
-        # 삭제시 오류 방지를 위해 아래서 부터 삭제(리버스 소팅)
-        rows = sorted(rows, reverse=True)
-
-        # 선택행 삭제
-        for rowid in rows:
-            self.tbl_list.removeRow(rowid)
-
-    
-    # 테이블에 남겨진 정보를 엑셀로 변환
-    def final_data(self):
-        rows = self.tbl_list.rowCount()
-        cols = self.tbl_list.columnCount()
-
-        list_2 = [] # 최종적으로 사용할 리스트는 for문 밖에 선언
-
-        for i in range(rows):
-            list_1 = [] # 2번째 for문 안쪽에서 사용할 리스트 선언
-            for j in range(cols):
-                data = self.tbl_list.item(i,j)
-                list_1.append(data.text())
-            list_2.append(list_1)
-
-        num = len(list_2)
-        self.make_excel(list_2, num)
-        
-
-    # 엑셀 파일을 만들고 넘겨진 배열 정보를 이용하여 sheet에 정보를 기입/저장 함.
-    def make_excel(self, arr, num):
-        wb = openpyxl.Workbook()
-        wb.create_sheet(index=0, title='위치정보')
-
-        sheet = wb.active
-        list_line = ['번호', '날짜', '품목', '수량', '받는사람', '전화번호1', '전화번호2', '우편번호', '주소', '비고']
-        sheet.append(list_line)
-
-        for i in range(num):
-            for j in range(len(list_line)):
-                sheet.cell(row=i+2, column=j+1, value=arr[i][j])
-
-        fname = self.file_save()
-
-        if fname:
-            self.save_excel(wb, fname)
-        else:
-            return
-
-
-    # def save_excel(self, workbook, file_name):
-    #     workbook.save(file_name)
-
-    #     self.close()
-
-
-
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)

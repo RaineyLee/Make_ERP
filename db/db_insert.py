@@ -44,7 +44,7 @@ class Insert:
             cursor.execute(query)
             self.conn.commit()
 
-            query = """INSERT INTO item_barcode (id, alias, name, barcode, sc_code, c_date) VALUES (%s, %s, %s, %s, %s, now());"""
+            query = """INSERT INTO item_barcode (item_id, item_name, barcode_in, barcode_out, c_date) VALUES (%s, %s, %s, %s, now());"""
             cursor.executemany(query, arr_1)
             self.conn.commit()
             self.conn.close()            
@@ -54,3 +54,25 @@ class Insert:
             return error
 
         return ("완료", "바코드 정보가 정상적으로 업로드 되었습니다.")
+
+    def insert_saleslist(self, arr_1):
+        cursor = self.conn.cursor()
+
+        try:
+            query = "TRUNCATE TABLE sales_list;"
+            cursor.execute(query)
+            self.conn.commit()
+
+            query = """INSERT INTO sales_list VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, now(), '');"""
+            cursor.executemany(query, arr_1)
+            self.conn.commit()
+            self.conn.close()            
+                        
+        except Exception as e:
+            error = ("Error", str(e))
+            return error
+
+        return ("완료", "제품 출고정보가 정상적으로 업로드 되었습니다.")
+
+# (send_date, order_num, order_date, customer_num, 
+#             order_customer, item_id, item_name, serial, ea, warehouse, message_1, destination, send_num, total_amount, second_amount, item_quantity, yesno, inout, item_loc, message_2, box_num, confirm_date, sending_date, message_3, date_1, date_2, ,emp_1, edit_date, completed)

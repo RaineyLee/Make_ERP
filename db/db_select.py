@@ -20,9 +20,16 @@ class Select:
     def select_location(self, arr_1):
         cursor = self.conn.cursor()
 
-        try:            
-            query = """SELECT A.id, A.name, A.location, A.brand, A.package, DATE_FORMAT(A.c_date, '%Y-%m-%d'), DATE_FORMAT(A.u_date, '%Y-%m-%d') FROM(SELECT id, name, location, brand, package, c_date, u_date FROM item_location WHERE u_date BETWEEN '2023-09-21' AND '2023-09-23') AS A;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
-            cursor.execute(query)
+        try:
+            # pymysql을 통해 쿼리 입력할 때, 아래와 같은 오류 문구를 만나곤 한다.
+            # ValueError: unsupported format character 'Y' (0x59) at index
+            # 이는 쿼리의 변수 표현에 쓰이는 %s와 data format 변경하는 (예시에서는 DATE_FORMAT) 에서의 %를 구분해주지 않았기 때문이다.
+            # SELECT DATE_FORMAT(DeviceReportedTime, '%Y-%m-%d %H:%i:%s') AS date, Facility, Priority, FromHost, FromIP, Message FROM SystemEvents WHERE DeviceReportedTime BETWEEN '%s 00:00:00' AND '%s 23:59:59' ORDER BY DeviceReportedTime DESC
+            # 위와 같이 작성하면 오류가 발생하는 것이다.            
+            # DATE_FORMAT 안의 %를 %%로 변경해주어 아래와 같은 코드로 변경해주자. 
+
+            query = """SELECT id, name, location, brand, package, DATE_FORMAT(c_date, '%%Y-%%m-%%d'), DATE_FORMAT(u_date, '%%Y-%%m-%%d') FROM item_location WHERE u_date BETWEEN %s AND %s;""" #날짜를 비교 하기 위해 안쪽 select문 사용, qt 테이블 입력을 위해 날짜 형식을 문자로 바꾸려고 밖의 select문 사용
+            cursor.execute(query, arr_1) #excute 문에 조회용 변수를 전달 할 때는 튜블 또는 리스트로 !!!!
             result = cursor.fetchall()
 
             if result:

@@ -18,14 +18,14 @@ def resource_path(relative_path):
 
 #UI파일 연결
 # main_window= uic.loadUiType(resource_path("/Users/black/projects/make_erp/main_window.ui"))[0] # Mac 사용시 ui 주소
-main_window= uic.loadUiType(resource_path("C:\\Python Workplace\\Make_ERP\\windows\\upload_barcode.ui"))[0] # Window 사용시 ui 주소
+main_window= uic.loadUiType(resource_path("C:\\Python Workplace\\Make_ERP\\windows\\upload_saleslist.ui"))[0] # Window 사용시 ui 주소
 
 #화면을 띄우는데 사용되는 Class 선언
 class WindowClass(QWidget, main_window) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("바코드 정보")
+        self.setWindowTitle("출고정보")
         self.slots()
 
         self.date_edit.setDate(QDate.currentDate())
@@ -56,10 +56,10 @@ class WindowClass(QWidget, main_window) :
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
         file_name = self.text_select_file.toPlainText()
 
-        from utils.make_data import Barcode
-        make_barcode_list = Barcode(file_name)
+        from utils.make_data import Saleslist
+        make_sales_list = Saleslist(file_name)
 
-        self._list = make_barcode_list.excel_data()
+        self._list = make_sales_list.excel_data()
                 
         self.make_table(len(self._list), self._list)
 
@@ -67,13 +67,15 @@ class WindowClass(QWidget, main_window) :
         self.tbl_info.setRowCount(0) # clear()는 행은 그대로 내용만 삭제, 행을 "0" 호출 한다.
         file_name = self.text_select_file.toPlainText()
 
-        from utils.make_data import Barcode
-        make_column_title = Barcode(file_name)
+        from utils.make_data import Saleslist
+        make_column_title = Saleslist(file_name)
 
         column_title = make_column_title.column_title()
-        self.tbl_info.setRowCount(num)
         self.tbl_info.setColumnCount(len(column_title))
         self.tbl_info.setHorizontalHeaderLabels(column_title)
+
+        self.tbl_info.setRowCount(num)        
+        col = self.tbl_info.columnCount()
 
         for i in range(num):
             for j in range(self.tbl_info.columnCount()): # 아니면 10개
@@ -84,7 +86,7 @@ class WindowClass(QWidget, main_window) :
         table = self.tbl_info
         header = table.horizontalHeader()
 
-        for i in range(len(column_title)):
+        for i in range(col):
             header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
         ################################################################
 
@@ -113,7 +115,7 @@ class WindowClass(QWidget, main_window) :
     def upload(self):
         from db.db_insert import Insert
         data_insert = Insert()
-        result = data_insert.insert_barcode(self._list)
+        result = data_insert.insert_saleslist(self._list)
 
         self.msg_box(result[0], result[1])
 

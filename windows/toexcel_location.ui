@@ -19,8 +19,11 @@
      <x>10</x>
      <y>50</y>
      <width>1221</width>
-     <height>741</height>
+     <height>691</height>
     </rect>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
    </property>
    <column>
     <property name="text">
@@ -44,7 +47,7 @@
    </column>
    <column>
     <property name="text">
-     <string>PACKAGE</string>
+     <string>PAC</string>
     </property>
    </column>
    <column>
@@ -157,6 +160,26 @@
    </property>
    <property name="calendarPopup">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_close">
+   <property name="geometry">
+    <rect>
+     <x>1142</x>
+     <y>750</y>
+     <width>91</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>닫기</string>
    </property>
   </widget>
  </widget>
