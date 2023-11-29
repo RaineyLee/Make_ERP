@@ -51,7 +51,12 @@ class WindowClass(QMainWindow, main_window) :
         item_location.setStatusTip("제품위치 입력")
         item_location.triggered.connect(self.item_location)
 
+        make_cjnumber = QAction('CJ송장번호 생성', self)
+        make_cjnumber.setStatusTip("CJ송장번호 생성")
+        make_cjnumber.triggered.connect(self.make_cjnumber)
+
         outgoing_menu.addAction(outgoing)
+        outgoing_menu.addAction(make_cjnumber)
         upload_menu.addAction(upload_location)
         upload_menu.addAction(upload_barcode)
         upload_menu.addAction(upload_saleslist)
@@ -86,6 +91,12 @@ class WindowClass(QMainWindow, main_window) :
 
         self.item_loc = item_loc.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
         self.item_loc.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+
+    def make_cjnumber(self):
+        import CJ_number_v1_2 as cj_number
+
+        self.cj_number = cj_number.WindowClass() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
+        self.cj_number.show() #메인창에서 띄우려면 메인창을 뜻하는 self 추가
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)
